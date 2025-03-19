@@ -1,3 +1,5 @@
+//FUNÇÕES DO BACK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 function stringSemelhante(nome, senha) {
   return nome.toLowerCase() === senha.toLowerCase();
 }
@@ -23,14 +25,11 @@ function fatorial(numero) {
 function entreNumeros(numero1, numero2) {
   var arrayResposta;
   if (numero1 !== numero2 && Math.pow(numero1 - numero2, 2) !== 1) {
-    //verifica se há numeros entre eles
     if (numero1 < numero2) {
-      //caso numero2 seja maior
       for (var i = 0; numero1 + i < numero2; i++) {
         arrayResposta.push(i + numero1);
       }
     } else {
-      //caso numero1 seja maior
       for (var i = 0; numero2 + i < numero1; i++) {
         arrayResposta.push(i + numero2);
       }
@@ -55,7 +54,6 @@ function perfilDeIdades(arrayIdades) {
     }
   }
 
-  // jogar o output pra uma função de front
   if (jovens > adultos && jovens > idosos) {
     return "Perfil: Jovem";
   } else if (adultos > jovens && adultos > idosos) {
@@ -99,7 +97,6 @@ function classificandoNumeros(arrayNumeros) {
     }
   }
 
-  // jogar o output pra uma função de front
   return (
     "Quantidade de numeros:\n" +
     "Entre 00 e 25: " +
@@ -162,3 +159,111 @@ function pedidoProduto(idProduto, qtd) {
     return "Produto não encontrado ou quantidade inválida.";
   }
 }
+
+//FUNÇÕES DO FRONT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function inputRequest(questao, numero = false, multiInput = false, limitedInput = 0) {
+  //colocar validação de dados
+  let enunciado = enunciados[parseInt(questao)];
+  let finalInput = [];
+
+  if (multiInput) {
+    if (limitedInput) {
+      for (let i = limitedInput; i > 0; ) {
+        tipo_aux = prompt(enunciado + "\nJá registrados: " + finalInput.toString());
+
+        if (numero && isNaN(tipo_aux)) {
+          alert("Por favor, insira somente números!");
+        } else {
+          finalInput[limitedInput - i] = tipo_aux;
+          i--;
+        }
+      }
+    } else {
+      //caso tenha multiplos inputs e ilimitados
+
+      let finalInput = [];
+      let aux = "";
+
+      for (let i = 0; !(aux === "FIM"); ) {
+        aux = prompt(
+          enunciado +
+            ' ou digite "FIM" para encerrar' +
+            "\nJá registrados: " +
+            finalInput.toString()
+        );
+        if (aux !== "FIM") {
+          if (numero && isNaN(aux)) {
+            alert("Por favor, insira somente números!");
+          } else {
+            finalInput[i] = aux;
+            i++;
+          }
+        }
+      }
+    }
+  } else {
+    //caso de input único
+    let aux = prompt(enunciado);
+    while (numero && isNaN(aux)) {
+      alert("Por favor, insira somente números!");
+      aux = prompt(enunciado);
+    }
+    finalInput = aux;
+  }
+
+  return finalInput;
+}
+
+function showOutput(q) {
+  let questao = parseInt(q) + 1;
+
+  switch (questao) {
+    case 1:
+      for (let output = true; output; output = output) {
+        let aux = inputRequest(q, false, true, 2);
+        output = stringSemelhante(aux[0], aux[1]);
+        if (output) alert("Nome e senha precisam ser diferentes! Tente novamente.");
+        else alert("Nome e senha registrados!\nNome: " + aux[0] + "\nSenha: " + aux[1]);
+      }
+      break;
+    case 2:
+      let numeros = inputRequest(q, true, true, 5);
+      let q2 = maiorNumero(numeros);
+      alert("O maior número dentre os registrados é: " + q2.toString());
+      break;
+    case 3:
+      break;
+    default:
+      alert("Questão indisponível.");
+  }
+}
+
+const enunciados = ["Digite um Nome e em seguida uma Senha. ", "Por favor, digite 5 números. "];
+
+document.addEventListener("DOMContentLoaded", function () {
+  var q_showing = 0;
+
+  document.getElementById("questao").innerHTML = q_showing + 1;
+  document.getElementById("qtd_questoes").innerHTML = enunciados.length;
+  document.getElementById("resp").addEventListener("click", function () {
+    showOutput(q_showing);
+  });
+
+  document.getElementById("ante").addEventListener("click", function () {
+    if (q_showing > 0) {
+      q_showing--;
+      document.getElementById("questao").innerHTML = q_showing + 1;
+      let image_path = "./img/n1q" + (q_showing + 1).toString() + ".png";
+      document.getElementById("q_img").src = image_path;
+    }
+  });
+
+  document.getElementById("prox").addEventListener("click", function () {
+    if (q_showing < enunciados.length - 1) {
+      q_showing++;
+      document.getElementById("questao").innerHTML = q_showing + 1;
+      let image_path = "./img/q" + (q_showing + 1).toString() + ".png";
+      document.getElementById("q_img").src = image_path;
+    }
+  });
+});
